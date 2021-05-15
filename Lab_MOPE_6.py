@@ -4,6 +4,7 @@ import numpy as np
 from numpy.linalg import solve
 from scipy.stats import f, t
 from prettytable import PrettyTable
+import time
 
 
 # Група: І0-93
@@ -163,6 +164,7 @@ def main(n, m):
     for i in range(15):
         print("{:.3f}".format(y_i[i]), end=" ")
     print("\n\n------------------------------- Перевірка за критерієм Кохрена -------------------------------")
+    start_time_kohren = time.perf_counter()
     Gp = max(dispersions) / sum(dispersions)
     Gt = 0.3346
     print("Gp =", Gp)
@@ -170,8 +172,10 @@ def main(n, m):
         print("Дисперсія однорідна")
     else:
         print("Дисперсія неоднорідна")
+    print(f"Час перевірки однорідності дисперсії за Кохреном: {time.perf_counter() - start_time_kohren}")
 
     print("\n------------------ Перевірка значущості коефіцієнтів за критерієм Стьюдента ------------------")
+    start_time_student = time.perf_counter()
     sb = sum(dispersions) / len(dispersions)
     sbs = (sb / (15 * m)) ** 0.5
 
@@ -204,8 +208,10 @@ def main(n, m):
     print("Значення з отриманими коефіцієнтами:")
     for i in range(15):
         print("{:.3f}".format(y_st[i]), end=" ")
+    print(f"\nЧас перевірки значимості коефіцієнтів регресії за Стьюдентом: {time.perf_counter() - start_time_student}")
 
     print("\n\n------------------------- Перевірка адекватності за критерієм Фішера -------------------------")
+    start_time_fisher = time.perf_counter()
     Sad = m * sum([(y_st[i] - Y_average[i]) ** 2 for i in range(15)]) / (n - d)
     Fp = Sad / sb
     F4 = n - d
@@ -214,6 +220,8 @@ def main(n, m):
         print("Рівняння регресії адекватне при рівні значимості 0.05")
     else:
         print("Рівняння регресії неадекватне при рівні значимості 0.05")
+    print(
+        f"Час перевірки адекватності моделі оригіналу за допомогою критерію Фішера: {time.perf_counter() -start_time_fisher}")
 
 
 if __name__ == '__main__':
